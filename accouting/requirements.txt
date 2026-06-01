@@ -1,2 +1,13 @@
+# Web Version Dependencies
 Flask==2.3.3
 Werkzeug==2.3.7
+
+# Mobile Version Dependencies
+Kivy==2.3.1
+buildozer==1.5.0
+
+# Optional: For production web deployment
+gunicorn==21.2.0
+
+# Database (included with Python, but listed for reference)
+# sqlite3 (built-in)
