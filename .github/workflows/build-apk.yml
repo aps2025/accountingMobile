@@ -36,16 +36,28 @@ jobs:
           wget \
           unzip
     
-    - name: Pre-accept all Android licenses
+    - name: Setup Android SDK
       run: |
         mkdir -p ~/.android/licenses
-        # Write license hashes without newlines
+        mkdir -p ~/.buildozer/android/platform/android-sdk
+        
+        # Download and setup Android SDK command-line tools
+        cd ~/.buildozer/android/platform/android-sdk
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+        unzip -q commandlinetools-linux-9477386_latest.zip
+        mkdir -p cmdline-tools/latest
+        mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+        
+        # Create tools symlink for backward compatibility
+        mkdir -p tools/bin
+        ln -sf ../cmdline-tools/latest/bin/sdkmanager tools/bin/sdkmanager || true
+        
+        # Accept licenses
         printf "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
         printf "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
         printf "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
         printf "e06d67d7b0149fac63c650e7b5850686eabda658" > ~/.android/licenses/google-android-extra-license
         
-        # Also create in buildozer cache location
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
         printf "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
         printf "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
