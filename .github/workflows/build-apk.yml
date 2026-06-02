@@ -39,11 +39,24 @@ jobs:
     - name: Set up Android SDK
       run: |
         mkdir -p ~/.android
+        export ANDROID_HOME=$HOME/Android/Sdk
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        
+        # Create necessary directories
+        mkdir -p $ANDROID_HOME/cmdline-tools
+        
+        # Download and extract Command-line Tools
+        cd $ANDROID_HOME/cmdline-tools
+        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+        unzip -q commandlinetools-linux-9477386_latest.zip
+        mv cmdline-tools latest
+        
+        # Accept licenses and install SDK packages
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0" "ndk;25.1.8937393"
+        
+        # Create local.properties
         echo "sdk.dir=$ANDROID_HOME" > ~/.android/local.properties
-        # Accept licenses
-        yes | sdkmanager --licenses || true
-        # Install required packages
-        sdkmanager "platforms;android-33" "build-tools;33.0.0" "ndk;25.1.8937393"
     
     - name: Build APK with buildozer
       working-directory: ./accouting
