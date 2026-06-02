@@ -35,6 +35,20 @@ orientation = portrait
 # presplash.filename = %(source.dir)s/data/presplash.png
 
 # Android-specific settings
+[app:android]
+
+# Android SDK version
+android.api = 33
+
+# Android NDK version
+android.ndk = 25.1.8937393
+
+# Android SDK path (will use ANDROID_HOME env var if set)
+# android.sdk_path = /path/to/android-sdk
+
+# Android NDK path
+# android.ndk_path = /path/to/android-ndk
+
 [buildozer]
 
 # Log level (0 = error only, 1 = info, 2 = debug)
