@@ -63,7 +63,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: billmanager-apk
-        path: accouting/bin/*.apk
+        path: accouting/bin/
         retention-days: 30
     
     - name: Create Release
