@@ -44,12 +44,18 @@ jobs:
     - name: Accept Android licenses
       run: |
         mkdir -p ~/.android/licenses
-        echo -e "\n8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
-        echo -e "\nd975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
+        echo "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
+        echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        echo "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
+        echo "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.buildozer/android/platform/android-sdk/licenses/intel-android-extra-license
     
     - name: Build APK with buildozer
       working-directory: ./accouting
+      env:
+        ANDROID_HOME: /home/runner/Android/Sdk
       run: |
         buildozer android debug
      
