@@ -32,35 +32,26 @@ jobs:
           libssl-dev \
           libffi-dev \
           python3-dev \
-          openjdk-17-jdk \
-          android-sdk \
-          android-sdk-platform-tools
+          openjdk-17-jdk
     
-    - name: Set up Android SDK and accept licenses
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 33
+        build-tools-version: 37.0.0
+        ndk-version: 25.1.8937393
+    
+    - name: Accept Android licenses
       run: |
         mkdir -p ~/.android
-        
-        # Create buildozer cache directory with licenses pre-accepted
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        echo -e "\n8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-        echo -e "\nd975f751698a77b662f1254ddbeed3901e976f5a" > ~/.buildozer/android/platform/android-sdk/licenses/intel-android-extra-license
+        echo -e "\n8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
+        echo -e "\nd975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
     
     - name: Build APK with buildozer
       working-directory: ./accouting
-      env:
-        ANDROID_SDK_ROOT: ${{ runner.workspace }}/android-sdk
       run: |
-        buildozer android debug 2>&1 | tee build.log || true
-        
-        # Check if APK was created
-        if [ -f bin/billmanager-1.0-debug.apk ]; then
-          echo "APK built successfully!"
-        else
-          echo "APK build failed, checking logs..."
-          tail -100 build.log
-          exit 1
-        fi
+        buildozer android debug
      
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
