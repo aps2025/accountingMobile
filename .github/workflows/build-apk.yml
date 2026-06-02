@@ -38,9 +38,11 @@ jobs:
     - name: Pre-accept Android licenses
       run: |
         mkdir -p ~/.android/licenses
-        echo -n "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
-        echo -n "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
-        echo -n "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
+        # Create license files with exact format sdkmanager expects
+        echo "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
+        echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
+        echo "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
+        echo "e06d67d7b0149fac63c650e7b5850686eabda658" > ~/.android/licenses/google-android-extra-license
     
     - name: Build APK
       working-directory: ./accouting
