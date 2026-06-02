@@ -43,11 +43,11 @@ android.api = 33
 # Android NDK version
 android.ndk = 25.1.8937393
 
-# Android SDK path (will use ANDROID_HOME env var if set)
-# android.sdk_path = /path/to/android-sdk
+# Use gradle instead of ant (more reliable)
+android.gradle_dependencies = 
 
-# Android NDK path
-# android.ndk_path = /path/to/android-ndk
+# Skip gradle wrapper
+android.skip_update = False
 
 [buildozer]
 
