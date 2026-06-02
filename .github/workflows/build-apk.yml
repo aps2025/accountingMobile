@@ -47,7 +47,7 @@ jobs:
       working-directory: ./accouting
       run: |
         buildozer android debug
-    
+     
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
