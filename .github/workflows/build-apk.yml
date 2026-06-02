@@ -38,16 +38,20 @@ jobs:
     - name: Pre-accept Android licenses
       run: |
         mkdir -p ~/.android/licenses
-        # Create license files with exact format sdkmanager expects
-        echo "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
-        echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
-        echo "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
-        echo "e06d67d7b0149fac63c650e7b5850686eabda658" > ~/.android/licenses/google-android-extra-license
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        
+        # Create license files in both locations
+        for dir in ~/.android/licenses ~/.buildozer/android/platform/android-sdk/licenses; do
+          echo "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > $dir/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $dir/android-sdk-preview-license
+          echo "d975f751698a77b662f1254ddbeed3901e976f5a" > $dir/intel-android-extra-license
+          echo "e06d67d7b0149fac63c650e7b5850686eabda658" > $dir/google-android-extra-license
+        done
     
     - name: Build APK
       working-directory: ./accouting
       run: |
-        buildozer android debug 2>&1 | tail -200
+        buildozer android debug
      
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
