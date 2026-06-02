@@ -48,6 +48,14 @@ jobs:
           echo "e06d67d7b0149fac63c650e7b5850686eabda658" > $dir/google-android-extra-license
         done
     
+    - name: Setup sdkmanager symlink
+      run: |
+        # Wait for buildozer to download SDK, then create symlink
+        mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
+        
+        # Create symlink from cmdline-tools to tools location
+        ln -sf ../cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager || true
+    
     - name: Build APK
       working-directory: ./accouting
       run: |
