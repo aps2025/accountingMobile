@@ -51,9 +51,14 @@ jobs:
         unzip -q commandlinetools-linux-9477386_latest.zip
         mv cmdline-tools latest
         
-        # Accept licenses and install SDK packages
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0" "ndk;25.1.8937393"
+        # Accept all licenses
+        mkdir -p $ANDROID_HOME/licenses
+        echo -e "\n8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > $ANDROID_HOME/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
+        echo -e "\nd975f751698a77b662f1254ddbeed3901e976f5a" > $ANDROID_HOME/licenses/intel-android-extra-license
+        
+        # Install SDK packages
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;37.0.0" "ndk;25.1.8937393"
         
         # Create local.properties
         echo "sdk.dir=$ANDROID_HOME" > ~/.android/local.properties
