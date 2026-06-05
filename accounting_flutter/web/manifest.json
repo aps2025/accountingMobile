@@ -1,6 +1,6 @@
 {
-    "name": "billmanager",
-    "short_name": "billmanager",
+    "name": "accounting_flutter",
+    "short_name": "accounting_flutter",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
