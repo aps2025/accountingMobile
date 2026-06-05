@@ -50,11 +50,9 @@ jobs:
       run: |
         export ANDROID_SDK_ROOT=~/Android/sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
-        mkdir -p ~/.android/licenses
-        echo "8933bad161af4d5d5c2185173dd8f0b13d7d3a92" > ~/.android/licenses/android-sdk-license
-        echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
-        echo "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.android/licenses/intel-android-extra-license
-        echo "e06d67d7b0149fac63c650e7b5850686eabda658" > ~/.android/licenses/google-android-extra-license
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo -e "24ac7fedf8b54b17c5e77bbac91f9171d11d9f43\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb7431302458f3a2253b\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
 
     - name: Install Android SDK components
       run: |
