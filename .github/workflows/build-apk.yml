@@ -16,6 +16,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Configure git
+      run: |
+        git config --global user.email "buildozer@docker.container"
+        git config --global user.name "Buildozer"
+
     - name: Accept Android licenses
       run: |
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
