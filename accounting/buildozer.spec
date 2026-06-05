@@ -43,8 +43,11 @@ android.api = 33
 # Android NDK version
 android.ndk = 25.1.8937393
 
+# Android build tools version
+android.build_tools = 33.0.0
+
 # Use gradle instead of ant (more reliable)
-android.gradle_dependencies = 
+android.gradle_dependencies =
 
 # Skip gradle wrapper
 android.skip_update = False
