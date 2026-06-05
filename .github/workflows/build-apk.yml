@@ -21,6 +21,16 @@ jobs:
         git config --global user.email "buildozer@docker.container"
         git config --global user.name "Buildozer"
 
+    - name: Pre-clone python-for-android
+      run: |
+        mkdir -p ~/.buildozer/android/platform
+        cd ~/.buildozer/android/platform
+        if [ ! -d "python-for-android" ]; then
+          git clone https://github.com/kivy/python-for-android.git
+          cd python-for-android
+          git remote set-url origin https://github.com/kivy/python-for-android.git
+        fi
+
     - name: Accept Android licenses
       run: |
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
