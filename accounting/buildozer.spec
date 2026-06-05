@@ -52,9 +52,6 @@ android.gradle_dependencies =
 # Skip gradle wrapper
 android.skip_update = False
 
-# Skip SDK update (use pre-installed SDK)
-android.skip_sdk_update = True
-
 [buildozer]
 
 # Log level (0 = error only, 1 = info, 2 = debug)

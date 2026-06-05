@@ -35,45 +35,16 @@ jobs:
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: Install Android SDK
+    - name: Accept Android licenses for Buildozer
       run: |
-        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-        unzip commandlinetools-linux-9477386_latest.zip
-        mkdir -p ~/Android/sdk/cmdline-tools/latest
-        mv cmdline-tools/* ~/Android/sdk/cmdline-tools/latest/
-        export ANDROID_SDK_ROOT=~/Android/sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
-        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-        echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
-
-    - name: Accept Android licenses
-      run: |
-        export ANDROID_SDK_ROOT=~/Android/sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
         echo -e "24ac7fedf8b54b17c5e77bbac91f9171d11d9f43\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb7431302458f3a2253b\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
         echo -e "84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-
-    - name: Install Android SDK components
-      run: |
-        export ANDROID_SDK_ROOT=~/Android/sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
-        sdkmanager --update
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "ndk;25.1.8937393"
-
-    - name: Set Buildozer environment
-      run: |
-        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-        echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.1.8937393" >> $GITHUB_ENV
-        echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
     
     - name: Build APK
       working-directory: ./accounting
       run: |
-        export ANDROID_HOME=$ANDROID_SDK_ROOT
-        export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT
-        export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.1.8937393
-        buildozer android debug --verbose
+        buildozer android debug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
