@@ -10,38 +10,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    container:
+      image: kivy/buildozer:latest
+
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev git wget unzip autoconf automake libtool pkg-config
-    
-    - name: Install buildozer and cython
-      run: |
-        pip install --upgrade pip
-        pip install buildozer cython
 
-    - name: Accept Android licenses for Buildozer
+    - name: Accept Android licenses
       run: |
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
         echo -e "24ac7fedf8b54b17c5e77bbac91f9171d11d9f43\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb7431302458f3a2253b\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
         echo -e "84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
 
-    - name: Build APK with auto license acceptance
+    - name: Build APK
       working-directory: ./accounting
       run: |
         yes | buildozer android debug
