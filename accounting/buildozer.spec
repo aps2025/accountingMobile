@@ -37,14 +37,14 @@ orientation = portrait
 # Android-specific settings
 [app:android]
 
-# Android SDK version
-android.api = 33
+# Android SDK version (use older version for better Buildozer compatibility)
+android.api = 30
 
 # Android NDK version
-android.ndk = 25.1.8937393
+android.ndk = 21.4.7075529
 
 # Android build tools version
-android.build_tools = 33.0.0
+android.build_tools = 30.0.3
 
 # Use gradle instead of ant (more reliable)
 android.gradle_dependencies =
