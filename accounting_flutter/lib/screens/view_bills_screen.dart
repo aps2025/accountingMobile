@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/bill.dart';
 import '../database/database_helper.dart';
 import '../services/calculator.dart';
+import '../services/data_transfer.dart';
 
 class ViewBillsScreen extends StatefulWidget {
   const ViewBillsScreen({super.key});
@@ -13,6 +14,7 @@ class ViewBillsScreen extends StatefulWidget {
 class _ViewBillsScreenState extends State<ViewBillsScreen> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final BillCalculator _calculator = BillCalculator();
+  final DataTransferService _dataTransfer = DataTransferService();
   
   List<Bill> _bills = [];
   double _monthlyTotal = 0;
@@ -45,6 +47,41 @@ class _ViewBillsScreenState extends State<ViewBillsScreen> {
   Future<void> _deleteBill(int id) async {
     await _dbHelper.deleteBill(id);
     _loadData();
+  }
+
+  Future<void> _exportData() async {
+    try {
+      await _dataTransfer.exportAndShare();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data exported successfully')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Export failed: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _importData() async {
+    try {
+      final count = await _dataTransfer.importFromFile();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Imported $count bills')),
+        );
+        _loadData();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Import failed: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -91,6 +128,30 @@ class _ViewBillsScreenState extends State<ViewBillsScreen> {
                         ),
                       ),
                     ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _exportData,
+                    icon: const Icon(Icons.share),
+                    label: const Text('Export Data'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: _importData,
+                    icon: const Icon(Icons.download),
+                    label: const Text('Import Data'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
                 ],
               ),

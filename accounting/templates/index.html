@@ -357,11 +357,26 @@
         <div class="statistics">
             <div class="stat-box">
                 <div class="stat-label">Monthly Total</div>
-                <div class="stat-value" id="monthlyTotal">$0.00</div>
+                <div class="stat-value" id="monthlyTotal">₹0.00</div>
             </div>
             <div class="stat-box">
                 <div class="stat-label">Yearly Total</div>
-                <div class="stat-value" id="yearlyTotal">$0.00</div>
+                <div class="stat-value" id="yearlyTotal">₹0.00</div>
+            </div>
+        </div>
+
+        <!-- Export/Import Section -->
+        <div class="card">
+            <h2>Data Backup & Restore</h2>
+            <div id="dataAlert" class="alert"></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <button class="btn-secondary" id="exportCsvBtn" onclick="exportBillsCSV()">📥 Export CSV</button>
+                <button class="btn-secondary" id="exportJsonBtn" onclick="exportBillsJSON()">📥 Export JSON</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label for="importFile">📤 Import Bills (CSV or JSON):</label>
+                <input type="file" id="importFile" accept=".csv,.json" style="margin-top: 5px; padding: 8px;">
+                <button class="btn-primary" style="width: 100%; margin-top: 8px;" onclick="importBills()">Import</button>
             </div>
         </div>
 
@@ -514,8 +529,8 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    document.getElementById('monthlyTotal').textContent = '$' + data.monthly_total.toFixed(2);
-                    document.getElementById('yearlyTotal').textContent = '$' + data.yearly_total.toFixed(2);
+                    document.getElementById('monthlyTotal').textContent = '₹' + data.monthly_total.toFixed(2);
+                    document.getElementById('yearlyTotal').textContent = '₹' + data.yearly_total.toFixed(2);
                 }
             } catch (error) {
                 console.error('Error loading statistics:', error);
@@ -643,20 +658,98 @@
                     <div class="bill-info">
                         <div class="bill-name">${escapeHtml(bill.name)}</div>
                         <div class="bill-details">
-                            <span><strong>Amount:</strong> $${bill.amount.toFixed(2)}</span>
+                            <span><strong>Amount:</strong> ₹${bill.amount.toFixed(2)}</span>
                             <span class="frequency-badge">${bill.frequency}</span>
                             <span><strong>Due:</strong> ${bill.due_date}</span>
                             ${bill.category ? `<span><strong>Category:</strong> ${escapeHtml(bill.category)}</span>` : ''}
                             <span class="badge ${bill.status === 'active' ? 'badge-active' : 'badge-inactive'}">${bill.status}</span>
                         </div>
                     </div>
-                    <div class="bill-amount">$${bill.amount.toFixed(2)}</div>
+                    <div class="bill-amount">₹${bill.amount.toFixed(2)}</div>
                     <div class="bill-actions">
                         <button class="btn-small btn-edit" onclick="editBill(${bill.id})">Edit</button>
                         <button class="btn-small btn-delete" onclick="deleteBill(${bill.id})">Delete</button>
                     </div>
                 </div>
             `).join('');
+        }
+
+        // ==================== EXPORT/IMPORT FUNCTIONS ====================
+
+        async function exportBillsCSV() {
+            try {
+                const response = await fetch(`${API_BASE}/export/csv`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'bills_export.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showAlert('dataAlert', 'success', 'Bills exported to CSV successfully');
+                } else {
+                    showAlert('dataAlert', 'error', 'Failed to export bills');
+                }
+            } catch (error) {
+                showAlert('dataAlert', 'error', 'Error exporting bills: ' + error.message);
+            }
+        }
+
+        async function exportBillsJSON() {
+            try {
+                const response = await fetch(`${API_BASE}/export/json`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'bills_export.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showAlert('dataAlert', 'success', 'Bills exported to JSON successfully');
+                } else {
+                    showAlert('dataAlert', 'error', 'Failed to export bills');
+                }
+            } catch (error) {
+                showAlert('dataAlert', 'error', 'Error exporting bills: ' + error.message);
+            }
+        }
+
+        async function importBills() {
+            const fileInput = document.getElementById('importFile');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showAlert('dataAlert', 'error', 'Please select a file to import');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${API_BASE}/import`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('dataAlert', 'success', data.message);
+                    fileInput.value = ''; // Clear file input
+                    loadBills();
+                    loadStatistics();
+                } else {
+                    showAlert('dataAlert', 'error', data.error || 'Import failed');
+                }
+            } catch (error) {
+                showAlert('dataAlert', 'error', 'Error importing bills: ' + error.message);
+            }
         }
 
         function showAlert(elementId, type, message) {

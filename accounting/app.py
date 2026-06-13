@@ -8,11 +8,13 @@ Run with: python app.py
 Access at: http://localhost:5000
 """
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from models import Bill, BillRepository
 from calculator import BillCalculator
 from validators import BillValidator
+from data_manager import DataExporter, DataImporter
 import json
+import io
 
 app = Flask(__name__)
 
@@ -201,6 +203,137 @@ def get_summary():
     try:
         summary = calculator.get_expense_summary()
         return jsonify({'success': True, 'summary': summary})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ==================== EXPORT/IMPORT ENDPOINTS ====================
+
+@app.route('/api/export/csv', methods=['GET'])
+def export_csv():
+    """Export all bills to CSV file."""
+    try:
+        bills = repository.get_all()
+        
+        if not bills:
+            return jsonify({'success': False, 'error': 'No bills to export'}), 400
+        
+        # Create CSV in memory
+        output = io.StringIO()
+        fieldnames = bills[0].keys()
+        import csv
+        writer = csv.DictWriter(output, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(bills)
+        
+        # Convert to bytes
+        output.seek(0)
+        mem = io.BytesIO()
+        mem.write(output.getvalue().encode('utf-8'))
+        mem.seek(0)
+        
+        return send_file(
+            mem,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='bills_export.csv'
+        )
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/export/json', methods=['GET'])
+def export_json():
+    """Export all bills to JSON file."""
+    try:
+        bills = repository.get_all()
+        
+        if not bills:
+            return jsonify({'success': False, 'error': 'No bills to export'}), 400
+        
+        # Create JSON in memory
+        json_data = json.dumps(bills, indent=2, ensure_ascii=False).encode('utf-8')
+        mem = io.BytesIO(json_data)
+        mem.seek(0)
+        
+        return send_file(
+            mem,
+            mimetype='application/json',
+            as_attachment=True,
+            download_name='bills_export.json'
+        )
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/import', methods=['POST'])
+def import_bills():
+    """Import bills from uploaded CSV or JSON file."""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': 'No file provided'}), 400
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'No file selected'}), 400
+        
+        # Check file extension
+        filename = file.filename.lower()
+        if not (filename.endswith('.csv') or filename.endswith('.json')):
+            return jsonify({'success': False, 'error': 'File must be CSV or JSON'}), 400
+        
+        # Read file content
+        content = file.read()
+        
+        # Import based on file type
+        if filename.endswith('.csv'):
+            import csv
+            text_content = content.decode('utf-8')
+            reader = csv.DictReader(io.StringIO(text_content))
+            imported_bills = list(reader)
+        else:  # JSON
+            imported_bills = json.loads(content.decode('utf-8'))
+        
+        if not isinstance(imported_bills, list):
+            return jsonify({'success': False, 'error': 'Invalid file format'}), 400
+        
+        # Import bills into database
+        imported_count = 0
+        errors = []
+        
+        for bill_data in imported_bills:
+            try:
+                # Convert types
+                if 'amount' in bill_data:
+                    bill_data['amount'] = float(bill_data['amount'])
+                if 'due_date' in bill_data:
+                    bill_data['due_date'] = int(bill_data['due_date'])
+                
+                # Create bill object
+                bill = Bill(
+                    name=bill_data.get('name', ''),
+                    amount=bill_data.get('amount', 0),
+                    frequency=bill_data.get('frequency', 'monthly'),
+                    due_date=bill_data.get('due_date', 1),
+                    category=bill_data.get('category', ''),
+                    notes=bill_data.get('notes', ''),
+                    payment_method=bill_data.get('payment_method', ''),
+                    status=bill_data.get('status', 'active')
+                )
+                
+                repository.create(bill)
+                imported_count += 1
+            
+            except Exception as e:
+                errors.append(f"Error importing bill: {str(e)}")
+        
+        return jsonify({
+            'success': True,
+            'imported_count': imported_count,
+            'errors': errors,
+            'message': f'Successfully imported {imported_count} bills'
+        })
+    
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 

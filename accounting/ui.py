@@ -128,11 +128,11 @@ class BillManagerUI:
         stats_inner = tk.Frame(stats_frame, bg="white")
         stats_inner.pack(fill=tk.X, padx=10, pady=5)
         
-        self.monthly_label = tk.Label(stats_inner, text="Monthly Total: $0.00", 
+        self.monthly_label = tk.Label(stats_inner, text="Monthly Total: ₹0.00", 
                                      font=("Arial", 10), bg="white", fg="#27ae60")
         self.monthly_label.pack(anchor="w")
         
-        self.yearly_label = tk.Label(stats_inner, text="Yearly Total: $0.00", 
+        self.yearly_label = tk.Label(stats_inner, text="Yearly Total: ₹0.00", 
                                     font=("Arial", 10), bg="white", fg="#27ae60")
         self.yearly_label.pack(anchor="w")
         
@@ -302,7 +302,7 @@ class BillManagerUI:
             values = (
                 bill["id"],
                 bill["name"],
-                f"${bill['amount']:.2f}",
+                f"₹{bill['amount']:.2f}",
                 bill["frequency"],
                 bill["due_date"],
                 bill["category"] or "-",
@@ -314,8 +314,8 @@ class BillManagerUI:
         monthly_total = self.calculator.calculate_monthly_total()
         yearly_total = self.calculator.calculate_yearly_total()
         
-        self.monthly_label.config(text=f"Monthly Total: ${monthly_total:.2f}")
-        self.yearly_label.config(text=f"Yearly Total: ${yearly_total:.2f}")
+        self.monthly_label.config(text=f"Monthly Total: ₹{monthly_total:.2f}")
+        self.yearly_label.config(text=f"Yearly Total: ₹{yearly_total:.2f}")
 
 
 def main():

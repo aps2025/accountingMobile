@@ -49,7 +49,7 @@ class BillItem(RecycleDataViewBehavior, BoxLayout):
         # Bill name and amount
         header = BoxLayout(size_hint_y=0.3, spacing=10)
         header.add_widget(Label(text=data['name'], bold=True, size_hint_x=0.7))
-        header.add_widget(Label(text=f"${data['amount']:.2f}", bold=True, color=(0.16, 0.67, 0.38, 1)))
+        header.add_widget(Label(text=f"₹{data['amount']:.2f}", bold=True, color=(0.16, 0.67, 0.38, 1)))
         self.add_widget(header)
         
         # Bill details
@@ -95,13 +95,13 @@ class BillManagerApp(App):
         
         monthly_box = BoxLayout(orientation='vertical', size_hint_x=0.5)
         monthly_box.add_widget(Label(text='Monthly Total', font_size='12sp'))
-        self.monthly_label = Label(text='$0.00', bold=True, font_size='16sp', color=(0.16, 0.67, 0.38, 1))
+        self.monthly_label = Label(text='₹0.00', bold=True, font_size='16sp', color=(0.16, 0.67, 0.38, 1))
         monthly_box.add_widget(self.monthly_label)
         stats_layout.add_widget(monthly_box)
         
         yearly_box = BoxLayout(orientation='vertical', size_hint_x=0.5)
         yearly_box.add_widget(Label(text='Yearly Total', font_size='12sp'))
-        self.yearly_label = Label(text='$0.00', bold=True, font_size='16sp', color=(0.16, 0.67, 0.38, 1))
+        self.yearly_label = Label(text='₹0.00', bold=True, font_size='16sp', color=(0.16, 0.67, 0.38, 1))
         yearly_box.add_widget(self.yearly_label)
         stats_layout.add_widget(yearly_box)
         
@@ -289,8 +289,8 @@ class BillManagerApp(App):
         monthly = self.calculator.calculate_monthly_total()
         yearly = self.calculator.calculate_yearly_total()
         
-        self.monthly_label.text = f'${monthly:.2f}'
-        self.yearly_label.text = f'${yearly:.2f}'
+        self.monthly_label.text = f'₹{monthly:.2f}'
+        self.yearly_label.text = f'₹{yearly:.2f}'
     
     def show_popup(self, title, message):
         """Show a popup dialog."""
