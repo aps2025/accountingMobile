@@ -106,7 +106,7 @@ class _AddBillScreenState extends State<AddBillScreen> {
               decoration: const InputDecoration(
                 labelText: 'Amount',
                 border: OutlineInputBorder(),
-                prefixText: '\$',
+                prefixText: '₹',
               ),
               validator: Validators.validateAmount,
             ),

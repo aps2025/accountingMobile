@@ -67,7 +67,7 @@ class _ViewBillsScreenState extends State<ViewBillsScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '\$${_monthlyTotal.toStringAsFixed(2)}',
+                        '₹${_monthlyTotal.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -83,7 +83,7 @@ class _ViewBillsScreenState extends State<ViewBillsScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '\$${_yearlyTotal.toStringAsFixed(2)}',
+                        '₹${_yearlyTotal.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -127,7 +127,7 @@ class _ViewBillsScreenState extends State<ViewBillsScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('\$${bill.amount.toStringAsFixed(2)}'),
+                                Text('₹${bill.amount.toStringAsFixed(2)}'),
                                 Text('${bill.frequency.capitalize()} - Due: ${bill.dueDate}'),
                                 if (bill.category != null)
                                   Text('Category: ${bill.category}'),
